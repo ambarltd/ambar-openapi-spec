@@ -1,0 +1,799 @@
+openapi: "3.0.1"
+info:
+  title: "Ambar OpenAPI Specification"
+  # We will version our spec to a day.
+  version: "2023-12-01"
+  description: "Details about communicating with Ambar.cloud public endpoints. Supported HTTP rest endpoints and their \
+  \ request and response details."
+  contact:
+    name: "Open API Spec"
+    url: "https://github.com/ambarltd/ambar-openapi-spec"
+    email: "contact@ambar.cloud"
+
+# List of available endpoints. This should be Ambar public Production environments.
+servers:
+  - url: "https://euw1.api.ambar.cloud"
+    description: "Ambar regional API endpoint for eu-west-1."
+
+# Detailed descriptions of the HTTP paths and Verbs of Ambar endpoints.
+paths:
+  /resource:
+    get:
+      tags:
+        - Ambar
+      # Optional, override the operation id (name) used for communication at this path
+      operationId: "ListResources"
+      # Short summary of the operation.
+      summary: "List the Ambar resources in your Ambar environment."
+      # Verbose description of the operation.
+      description: "List the Ambar resources in your Ambar environment. Resources will be returned \
+      \ in a list of lists, where each sub-list will be of one Ambar resourceType."
+      # Eventually, we need to point to any gitlab, wikis, etc. that we offer to customers.
+      externalDocs:
+        description: "More details available in Ambar public docs."
+        url: ""
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ListResourcesRequest"
+        required: false
+      responses:
+        200:
+          description: "A list of Ambar resources in your environment, broken down by resourceType"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListResourcesResponse"
+        400:
+          description: "The request cannot be process at this time."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InvalidParameterException"
+        500:
+          description: "A service exception occurred. Retry the request again later."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AmbarServiceException"
+      security:
+        - api_key: []
+  /filter:
+    get:
+      tags:
+        - Ambar
+      operationId: "DescribeFilter"
+      summary: "Describes a Filter in your Ambar environment."
+      description: "Describe a Filter in your Ambar environment to see detailed information about the resource not given by the \
+      \ ListResources API."
+      externalDocs:
+        description: "More details available in Ambar public docs."
+        url: ""
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DescribeResourceRequest"
+        required: true
+      responses:
+        200:
+          description: "Details about the requested Ambar Filter resource."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Filter"
+        404:
+          description: "The requested resource does not exist, or is not an Ambar Filter."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResourceNotFoundException"
+        500:
+          description: "A service exception occurred. Retry the request again later."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AmbarServiceException"
+      security:
+        - api_key: []
+    post:
+      tags:
+        - Ambar
+      operationId: "CreateFilter"
+      summary: "Create a Filter in your Ambar environment."
+      description: "Create a Filter in your Ambar environment, specifying the DataSources from which record sequences should\
+      \ be read and what predicates should be applied. Then create a DataDestination with the Filter to send filtered sequences\
+      \ using the Filter."
+      externalDocs:
+        description: "More details available in Ambar public docs."
+        url: ""
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateFilterRequest"
+        required: true
+      responses:
+        200:
+          description: "The requested resource's id and state after the request."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResourceStateChangeResponse"
+        400:
+          description: "The request cannot be process at this time."
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/InvalidParameterException"
+                  - $ref: "#/components/schemas/ResourceInvalidStateException"
+                  - $ref: "#/components/schemas/InvalidFilterException"
+        404:
+          description: "The requested resource does not exist, or is not an Ambar Filter."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResourceNotFoundException"
+        500:
+          description: "A service exception occurred. Retry the request again later."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AmbarServiceException"
+      security:
+        - api_key: []
+    delete:
+      tags:
+        - Ambar
+      operationId: "DeleteFilter"
+      summary: "Delete a Filter in your Ambar environment."
+      description: "Deletes a Filter in your Ambar environment, ensure that the filter is no longer being used by any\
+      \ DataDestinations in your environment first in order to ensure no issues with your Ambar environment."
+      externalDocs:
+        description: "More details available in Ambar public docs."
+        url: ""
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DeleteResourceRequest"
+        required: true
+      responses:
+        200:
+          description: "The requested resource's id and state after the request."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResourceStateChangeResponse"
+        400:
+          description: "The request cannot be processed as is. Check the request for errors and try again."
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/InvalidParameterException"
+                  - $ref: "#/components/schemas/ResourceInvalidStateException"
+        404:
+          description: "The requested resource does not exist, or is not an Ambar Filter."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResourceNotFoundException"
+        500:
+          description: "A service exception occurred. Retry the request again later."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AmbarServiceException"
+      security:
+        - api_key: []
+  /destination:
+    get:
+      tags:
+        - Ambar
+      operationId: "DescribeDataDestination"
+      summary: "Describe a DataDestination in your Ambar environment."
+      description: "Describe a DataDestination in your Ambar environment and see non-sensitive details about the configuration\
+      \ of the DataDestination"
+      externalDocs:
+        description: "More details available in Ambar public docs."
+        url: ""
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DescribeResourceRequest"
+        required: true
+      responses:
+        200:
+          description: "200 response"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DataDestination"
+        404:
+          description: "The requested resource does not exist, or is not an Ambar Filter."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResourceNotFoundException"
+        500:
+          description: "A service exception occurred. Retry the request again later."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AmbarServiceException"
+      security:
+        - api_key: []
+    post:
+      tags:
+        - Ambar
+      operationId: "CreateDataDestination"
+      summary: "Create a DataDestination in your Ambar environment."
+      description: "Create a DataDestination in you Ambar environment, specifying the Filter which the DataDestination should apply\
+      \ before sending message sequences to the specified HTTP endpoint."
+      externalDocs:
+        description: "More details available in Ambar public docs."
+        url: ""
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateDataDestinationRequest"
+        required: true
+      responses:
+        200:
+          description: "The requested resource's id and state after the request."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResourceStateChangeResponse"
+        400:
+          description: "The request cannot be processed as is. Check the request for errors and try again."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InvalidParameterException"
+        404:
+          description: "The requested resource does not exist, or is not an Ambar DataDestination."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResourceNotFoundException"
+        500:
+          description: "A service exception occurred. Retry the request again later."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AmbarServiceException"
+      security:
+        - api_key: []
+    patch:
+      tags:
+        - Ambar
+      operationId: "UpdateDataDestinationCredentials"
+      summary: "Update the credentials associated with a DataDestination in your Ambar environment."
+      description: "Update a DataDestination in you Ambar environment, specifying the username and password credential pair\
+       to authenticate to the specified HTTP endpoint."
+      externalDocs:
+        description: "More details available in Ambar public docs."
+        url: ""
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateResourceCredentialsRequest"
+        required: true
+      responses:
+        200:
+          description: "The requested resource's id and state after the request."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResourceStateChangeResponse"
+        400:
+          description: "The request cannot be processed as is. Check the request for errors and try again."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InvalidParameterException"
+        404:
+          description: "The requested resource does not exist, or is not an Ambar DataDestination."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResourceNotFoundException"
+        500:
+          description: "A service exception occurred. Retry the request again later."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AmbarServiceException"
+      security:
+        - api_key: [ ]
+    delete:
+      tags:
+        - Ambar
+      operationId: "DeleteDataDestination"
+      summary: "Delete a DataDestination in your Ambar environment."
+      description: "Delete a DataDestination in your Ambar environment. This should be done first before deleting any Filters\
+      \ referenced by the DataDestination, or DataSources referenced in that Filter."
+      externalDocs:
+        description: "More details available in Ambar public docs."
+        url: ""
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DeleteResourceRequest"
+        required: true
+      responses:
+        200:
+          description: "The requested resource's id and state after the request."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResourceStateChangeResponse"
+        400:
+          description: "The request cannot be processed as is. Check the request for errors and try again."
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/InvalidParameterException"
+                  - $ref: "#/components/schemas/ResourceInvalidStateException"
+        404:
+          description: "The requested resource does not exist, or is not an Ambar Filter."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResourceNotFoundException"
+        500:
+          description: "A service exception occurred. Retry the request again later."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AmbarServiceException"
+      security:
+        - api_key: []
+  /source:
+    get:
+      tags:
+        - Ambar
+      operationId: "DescribeDataSource"
+      summary: "Describe a DataSource in your Ambar environment."
+      description: "Describe a DataSource in your Ambar environment to see detailed information about the resource not given by the \
+      \ ListResources API."
+      externalDocs:
+        description: "More details available in Ambar public docs."
+        url: ""
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DescribeResourceRequest"
+        required: true
+      responses:
+        200:
+          description: "200 response"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DataSource"
+        404:
+          description: "The requested resource does not exist, or is not an Ambar Filter."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResourceNotFoundException"
+        500:
+          description: "A service exception occurred. Retry the request again later."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AmbarServiceException"
+      security:
+        - api_key: []
+    post:
+      tags:
+        - Ambar
+      operationId: "CreateDataSource"
+      summary: "Create a DataSource in your Ambar environment."
+      description: "Create a DataSource in you Ambar environment, specifying the type of durable storage from which Ambar\
+      will read from, and the corresponding configuration values like table name, and columns to include in message sequences."
+      externalDocs:
+        description: "More details available in Ambar public docs."
+        url: ""
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateDataSourceRequest"
+        required: true
+      responses:
+        200:
+          description: "The requested resource's id and state after the request."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResourceStateChangeResponse"
+        400:
+          description: "The request cannot be processed as is. Check the request for errors and try again."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InvalidParameterException"
+        500:
+          description: "A service exception occurred. Retry the request again later."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AmbarServiceException"
+      security:
+        - api_key: []
+    delete:
+      tags:
+        - Ambar
+      operationId: "DeleteDataSource"
+      summary: "Delete a DataSource in your Ambar environment."
+      description: "Delete a DataSource in your Ambar environment, purging all data from the environment which was read from\
+       the DataSource. Make sure to ensure that the DataSource is not referenced in any Filters in your Ambar environment."
+      externalDocs:
+        description: "More details available in Ambar public docs."
+        url: ""
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DeleteResourceRequest"
+        required: true
+      responses:
+        200:
+          description: "The requested resource's id and state after the request."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResourceStateChangeResponse"
+        400:
+          description: "The request cannot be processed as is. Check the request for errors and try again."
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/InvalidParameterException"
+                  - $ref: "#/components/schemas/ResourceInvalidStateException"
+        404:
+          description: "The requested resource does not exist, or is not an Ambar Filter."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResourceNotFoundException"
+        500:
+          description: "A service exception occurred. Retry the request again later."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AmbarServiceException"
+      security:
+        - api_key: []
+components:
+  schemas:
+    # List Resources response shapes
+    ListResourcesResponse:
+      type: "object"
+      properties:
+        nextPage:
+          type: "integer"
+          description: "The next page available for listing if there is one."
+        resources:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/ResourceTypeDetails"
+    ResourceTypeDetails:
+      type: "object"
+      properties:
+        resourceType:
+          type: "string"
+        limit:
+          type: "object"
+          properties:
+            limit:
+              type: "integer"
+            used:
+              type: "integer"
+        details:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/ResourceDetails"
+    ResourceDetails:
+      type: "object"
+      properties:
+        resourceId:
+          type: "string"
+        description:
+          type: "string"
+        state:
+          type: "string"
+        createdAt:
+          type: "string"
+        lastUpdated:
+          type: "string"
+    # Common state change response shape, for API's which will cause a resource to change state (create, update, delete, etc)
+    ResourceStateChangeResponse:
+      type: "object"
+      properties:
+        resourceId:
+          type: "string"
+        state:
+          type: "string"
+      required:
+        - "resourceId"
+        - "state"
+    # Describe DataDestination Shape
+    DataDestination:
+      description: "The properties describing an Ambar Data Destination."
+      type: "object"
+      properties:
+        createdAt:
+          type: "string"
+          description: "The UTC time at which the DataDestination was created."
+        destinationEndpoint:
+          type: "string"
+          description: "The HTTP endpoint which Ambar sends filtered record sequences\
+            \ to."
+        description:
+          type: "string"
+          description: "The description of the DataDestination given when it was created."
+        filterIds:
+          type: "array"
+          description: "The Ambar resourceId for the Filters which are applied to record\
+                      \ sequences sent to the configured DataDestination."
+          items:
+            type: "string"
+        resourceId:
+          type: "string"
+          description: "The Ambar resourceId corresponding to this DataDestination."
+        state:
+          type: "string"
+          description: "The ResourceState of this DataDestination. For possible values\
+            \ see ResourceState in our developer docs."
+      required:
+        - "createdAt"
+        - "destinationEndpoint"
+        - "filterIds"
+        - "resourceId"
+        - "state"
+    # Describe Filter Shape
+    Filter:
+      description: "The properties describing an Ambar Filter."
+      type: "object"
+      properties:
+        createdAt:
+          type: "string"
+          description: "The UTC time at which the Filter was created."
+        dataDestinationsUsingFilter:
+          type: "array"
+          description: "The list of DataDestination ResourceIds which use this Filter."
+          items:
+            type: "string"
+        dataSourceId:
+          type: "string"
+          description: "The DataSource ResourceId which this Filter will\
+            \ read from."
+        resourceId:
+          type: "string"
+          description: "The Ambar resourceId corresponding to this Filter."
+        description:
+          type: "string"
+          description: "The description of the Filter given when it was created."
+        state:
+          type: "string"
+          description: "The ResourceState of this Filter. For possible values see\
+            \ ResourceState in our developer docs."
+      required:
+        - "createdAt"
+        - "dataDestinationsUsingFilter"
+        - "dataSourceId"
+        - "resourceId"
+        - "state"
+    # Describe DataSource Shape
+    DataSource:
+      description: "The properties describing an Ambar Data Source."
+      type: "object"
+      properties:
+        createdAt:
+          type: "string"
+          description: "The UTC time at which the DataSource was created."
+        dataSourceConfig:
+          type: "object"
+          description: "The properties describing the configuration details for the\
+            \ given DataSourceType."
+        dataSourceType:
+          type: "string"
+          description: "The DataSourceType describing the type of durable storage\
+            \ system this DataSource pulls record sequences from."
+        resourceId:
+          type: "string"
+          description: "The Ambar resourceId corresponding to this DataSource."
+        state:
+          type: "string"
+          description: "The ResourceState of this DataSource. For possible values\
+            \ see ResourceState in our developer docs."
+        description:
+          type: "string"
+          description: "A user friendly description of this DataSource."
+      required:
+        - "createdAt"
+        - "dataSourceConfig"
+        - "dataSourceType"
+        - "resourceId"
+        - "state"
+    # Request shapes
+    ListResourcesRequest:
+      type: "object"
+      properties:
+        resourceType:
+          type: "string"
+          description: ""
+        page:
+          type: "string"
+          description: ""
+    # Create DataDestination request shape
+    CreateDataDestinationRequest:
+      required:
+        - "destinationEndpoint"
+        - "filterIds"
+        - "password"
+        - "username"
+      type: "object"
+      properties:
+        destinationEndpoint:
+          type: "string"
+          description: "The HTTP endpoint which Ambar will deliver messages too. The\
+            \ endpoint should accept a username and password credential pair for authentication."
+        description:
+          type: "string"
+          description: "A description for identifying this DataDestination."
+        filterIds:
+          type: "array"
+          items:
+            type: "string"
+            description: ""
+          description: "The Ambar ResourceId of a the filter in your environment to\
+            \ use to determine what data sources to pull records from and how to filter\
+            \ record sequences before delivery to your endpoint."
+        password:
+          type: "string"
+          description: "A case sensitive string for the user Ambar should use to connect\
+            \ to your HTTP endpoint service."
+        username:
+          type: "string"
+          description: "A case sensitive string for the user Ambar should use to connect\
+            \ to your HTTP endpoint service."
+      description: "The request properties for creating an Ambar Data Destination."
+    # Common Update Resource Credentials request shape
+    UpdateResourceCredentialsRequest:
+      required:
+        - "resourceId"
+        - "username"
+        - "password"
+      type: "object"
+      properties:
+        resourceId:
+          type: "string"
+          description: "An Ambar resourceId."
+        password:
+          type: "string"
+          description: "The password portion of the credential to update for your resource."
+        username:
+          type: "string"
+          description: "The username portion of the credential to update for your resource."
+      description: "The common request for updating credentials of an Ambar resource."
+    # Common Describe Resource request shape
+    DescribeResourceRequest:
+      required:
+        - "resourceId"
+      type: "object"
+      properties:
+        resourceId:
+          type: "string"
+          description: "An Ambar resourceId."
+      description: "The common request for describing an Ambar resource."
+    # Creat DataSource request shape
+    CreateDataSourceRequest:
+      description: "The request properties for creating an Ambar Data Source."
+      required:
+        - "dataSourceConfig"
+        - "dataSourceType"
+      type: "object"
+      properties:
+        dataSourceType:
+          type: "string"
+          description: "A case-insensitive string value describing the type of durable\
+            \ storage system you wish to connect to your Ambar environment. See supported\
+            \ DataSourceTypes in our developer docs for more details on valid values."
+        description:
+          type: "string"
+          description: "A description for identifying this DataSource."
+        dataSourceConfig:
+          type: "object"
+          additionalProperties:
+            type: string
+          description: "A object containing inputs which are specific depending on\
+            \ the type of DataSource being created. See out developer docs for supported\
+            \ DataSourceTypes and corresponding configurations."
+    CreateFilterRequest:
+      required:
+        - "filterContents"
+        - "dataSourceId"
+      type: "object"
+      properties:
+        filterContents:
+          type: "string"
+          description: "A base64 encoded Ambar Filter. For details about Ambar filter syntax, see our developer docs."
+        dataSourceId:
+          type: "string"
+          description: "The Resource Id of a DataSource resource, which this filter should be applied to by a DataDestination."
+        description:
+          type: "string"
+          description: "A description for identifying this Filter."
+      description: "The request properties for creating an Ambar Filter."
+    # Common Delete Resource Request shape
+    DeleteResourceRequest:
+      required:
+        - "resourceId"
+      type: "object"
+      properties:
+        resourceId:
+          type: "string"
+          description: "An Ambar resourceId."
+          example:
+      description: "The common request for deleting an Ambar resource."
+    # Error shapes
+    # 400 - Invalid filter input
+    InvalidFilterException:
+      required:
+        - "InvalidFilterException"
+      type: "object"
+      properties:
+        InvalidFilterException:
+          type: "string"
+    # 400 - Invalid parameter
+    InvalidParameterException:
+      required:
+        - "InvalidParameterException"
+      type: "object"
+      properties:
+        InvalidParameterException:
+          type: "string"
+    # 400 - Resource invalid state
+    ResourceInvalidStateException:
+      required:
+        - "ResourceInvalidStateException"
+      type: "object"
+      properties:
+        ResourceInvalidStateException:
+          type: "string"
+    # 404 - Resource not found
+    ResourceNotFoundException:
+      required:
+        - "ResourceNotFoundException"
+      type: "object"
+      properties:
+        ResourceNotFoundException:
+          type: "string"
+    # 500 - Service Exception
+    AmbarServiceException:
+      required:
+        - "AmbarServiceException"
+      type: "object"
+      properties:
+        AmbarServiceException:
+          type: "string"
+  securitySchemes:
+    api_key:
+      type: "apiKey"
+      name: "x-api-key"
+      in: "header"
