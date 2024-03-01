@@ -10,7 +10,7 @@ info:
     url: "https://github.com/ambarltd/ambar-openapi-spec"
     email: "contact@ambar.cloud"
 
-# List of available endpoints. This should be Ambar public Production environments.
+# List of available endpoints.
 servers:
   - url: "https://euw1.api.ambar.cloud"
     description: "Ambar regional API endpoint for eu-west-1."
@@ -31,7 +31,7 @@ paths:
       # Eventually, we need to point to any gitlab, wikis, etc. that we offer to customers.
       externalDocs:
         description: "More details available in Ambar public docs."
-        url: ""
+        url: "https://docs.ambar.cloud"
       requestBody:
         content:
           application/json:
@@ -69,7 +69,7 @@ paths:
       \ ListResources API."
       externalDocs:
         description: "More details available in Ambar public docs."
-        url: ""
+        url: "https://docs.ambar.cloud"
       requestBody:
         content:
           application/json:
@@ -107,7 +107,7 @@ paths:
       \ using the Filter."
       externalDocs:
         description: "More details available in Ambar public docs."
-        url: ""
+        url: "https://docs.ambar.cloud"
       requestBody:
         content:
           application/json:
@@ -153,7 +153,7 @@ paths:
       \ DataDestinations in your environment first in order to ensure no issues with your Ambar environment."
       externalDocs:
         description: "More details available in Ambar public docs."
-        url: ""
+        url: "https://docs.ambar.cloud"
       requestBody:
         content:
           application/json:
@@ -199,7 +199,7 @@ paths:
       \ of the DataDestination"
       externalDocs:
         description: "More details available in Ambar public docs."
-        url: ""
+        url: "https://docs.ambar.cloud"
       requestBody:
         content:
           application/json:
@@ -236,7 +236,7 @@ paths:
       \ before sending message sequences to the specified HTTP endpoint."
       externalDocs:
         description: "More details available in Ambar public docs."
-        url: ""
+        url: "https://docs.ambar.cloud"
       requestBody:
         content:
           application/json:
@@ -279,7 +279,7 @@ paths:
        to authenticate to the specified HTTP endpoint."
       externalDocs:
         description: "More details available in Ambar public docs."
-        url: ""
+        url: "https://docs.ambar.cloud"
       requestBody:
         content:
           application/json:
@@ -322,7 +322,7 @@ paths:
       \ referenced by the DataDestination, or DataSources referenced in that Filter."
       externalDocs:
         description: "More details available in Ambar public docs."
-        url: ""
+        url: "https://docs.ambar.cloud"
       requestBody:
         content:
           application/json:
@@ -368,7 +368,7 @@ paths:
       \ ListResources API."
       externalDocs:
         description: "More details available in Ambar public docs."
-        url: ""
+        url: "https://docs.ambar.cloud"
       requestBody:
         content:
           application/json:
@@ -405,7 +405,7 @@ paths:
       will read from, and the corresponding configuration values like table name, and columns to include in message sequences."
       externalDocs:
         description: "More details available in Ambar public docs."
-        url: ""
+        url: "https://docs.ambar.cloud"
       requestBody:
         content:
           application/json:
@@ -442,7 +442,7 @@ paths:
        the DataSource. Make sure to ensure that the DataSource is not referenced in any Filters in your Ambar environment."
       externalDocs:
         description: "More details available in Ambar public docs."
-        url: ""
+        url: "https://docs.ambar.cloud"
       requestBody:
         content:
           application/json:
