@@ -2,7 +2,7 @@ openapi: "3.0.1"
 info:
   title: "Ambar OpenAPI Specification"
   # We will version our spec to a day.
-  version: "2023-12-01"
+  version: "2024-04-25"
   description: "Details about communicating with Ambar.cloud public endpoints. Supported HTTP rest endpoints and their \
   \ request and response details."
   contact:
@@ -313,6 +313,51 @@ paths:
                 $ref: "#/components/schemas/AmbarServiceException"
       security:
         - api_key: [ ]
+    put:
+      tags:
+        - Ambar
+      operationId: "UpdateDataDestination"
+      summary: "Updates a DataDestination in your Ambar environment."
+      description: "Update a DataDestination in you Ambar environment, specifying values in the request which you would like \
+      \ to be applied to your DataDestination."
+      externalDocs:
+        description: "More details available in Ambar public docs."
+        url: "https://docs.ambar.cloud"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateDataDestinationRequest"
+        required: true
+      responses:
+        200:
+          description: "The requested resource's id and state after the request."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResourceStateChangeResponse"
+        400:
+          description: "The request cannot be processed as is. Check the request for errors and try again."
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/InvalidParameterException"
+                  - $ref: "#/components/schemas/ResourceInvalidStateException"
+        404:
+          description: "The requested resource does not exist, or is not an Ambar DataDestination."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResourceNotFoundException"
+        500:
+          description: "A service exception occurred. Retry the request again later."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AmbarServiceException"
+      security:
+        - api_key: [ ]
     delete:
       tags:
         - Ambar
@@ -433,6 +478,94 @@ paths:
                 $ref: "#/components/schemas/AmbarServiceException"
       security:
         - api_key: []
+    patch:
+      tags:
+        - Ambar
+      operationId: "UpdateDataSourceCredentials"
+      summary: "Update the credentials associated with a DataSource in your Ambar environment."
+      description: "Update a DataSource in you Ambar environment, specifying the username and password credential pair\
+           to authenticate to your DataSource's storage."
+      externalDocs:
+        description: "More details available in Ambar public docs."
+        url: "https://docs.ambar.cloud"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateResourceCredentialsRequest"
+        required: true
+      responses:
+        200:
+          description: "The requested resource's id and state after the request."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResourceStateChangeResponse"
+        400:
+          description: "The request cannot be processed as is. Check the request for errors and try again."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InvalidParameterException"
+        404:
+          description: "The requested resource does not exist, or is not an Ambar DataSource."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResourceNotFoundException"
+        500:
+          description: "A service exception occurred. Retry the request again later."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AmbarServiceException"
+      security:
+        - api_key: [ ]
+    put:
+      tags:
+        - Ambar
+      operationId: "UpdateDataSource"
+      summary: "Updates a DataSource in your Ambar environment."
+      description: "Update a DataSource in you Ambar environment, specifying values in the request which you would like \
+      \ to be applied to your DataSource."
+      externalDocs:
+        description: "More details available in Ambar public docs."
+        url: "https://docs.ambar.cloud"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateDataSourceRequest"
+        required: true
+      responses:
+        200:
+          description: "The requested resource's id and state after the request."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResourceStateChangeResponse"
+        400:
+          description: "The request cannot be processed as is. Check the request for errors and try again."
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/InvalidParameterException"
+                  - $ref: "#/components/schemas/ResourceInvalidStateException"
+        404:
+          description: "The requested resource does not exist, or is not an Ambar DataSource."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResourceNotFoundException"
+        500:
+          description: "A service exception occurred. Retry the request again later."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AmbarServiceException"
+      security:
+        - api_key: [ ]
     delete:
       tags:
         - Ambar
@@ -624,12 +757,19 @@ components:
         description:
           type: "string"
           description: "A user friendly description of this DataSource."
+        filterIds:
+          type: "array"
+          items:
+            type: "string"
+            description: ""
+          description: "The Ambar ResourceIds of filters which refer to this DataSource."
       required:
         - "createdAt"
         - "dataSourceConfig"
         - "dataSourceType"
         - "resourceId"
         - "state"
+        - "filterIds"
     # Request shapes
     ListResourcesRequest:
       type: "object"
@@ -673,6 +813,21 @@ components:
           description: "A case sensitive string for the user Ambar should use to connect\
             \ to your HTTP endpoint service."
       description: "The request properties for creating an Ambar Data Destination."
+    # Update Data Destination request shape
+    UpdateDataDestinationRequest:
+      required:
+        - "resourceId"
+        - "destinationEndpoint"
+      type: "object"
+      properties:
+        destinationEndpoint:
+          type: "string"
+          description: "The HTTP endpoint which Ambar will deliver messages too. The\
+            \ endpoint should accept a username and password credential pair for authentication."
+        resourceId:
+          type: "string"
+          description: "An Ambar resourceId."
+      description: "The resource properties to update on the Ambar Data Destination."
     # Common Update Resource Credentials request shape
     UpdateResourceCredentialsRequest:
       required:
@@ -724,6 +879,25 @@ components:
           description: "A object containing inputs which are specific depending on\
             \ the type of DataSource being created. See out developer docs for supported\
             \ DataSourceTypes and corresponding configurations."
+    UpdateDataSourceRequest:
+      description: "The request properties for updating an Ambar Data Source."
+      required:
+        - "resourceId"
+      type: "object"
+      properties:
+        resourceId:
+          type: "string"
+          description: "An Ambar resourceId."
+          example: "AMBAR-1fG45k7090"
+        hostname:
+          type: string
+          description: "The hostname of the database which the DataSource connects to."
+        port:
+          type: string
+          description: "The port on which the database host is listening for incoming connections."
+        tlsTerminationOverrideHost:
+          type: string
+          description: "The hostname of an alternative host handling TLS termination."
     CreateFilterRequest:
       required:
         - "filterContents"
@@ -749,7 +923,7 @@ components:
         resourceId:
           type: "string"
           description: "An Ambar resourceId."
-          example:
+          example: "AMBAR-1fG45k7090"
       description: "The common request for deleting an Ambar resource."
     # Error shapes
     # 400 - Invalid filter input
