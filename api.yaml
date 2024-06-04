@@ -428,7 +428,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/DataSource"
         404:
-          description: "The requested resource does not exist, or is not an Ambar Filter."
+          description: "The requested resource does not exist, or is not an Ambar DataSource."
           content:
             application/json:
               schema:
