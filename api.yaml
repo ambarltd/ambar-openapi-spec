@@ -2,7 +2,7 @@ openapi: "3.0.1"
 info:
   title: "Ambar OpenAPI Specification"
   # We will version our spec to a day.
-  version: "2024-04-25"
+  version: "2024-06-11"
   description: "Details about communicating with Ambar.cloud public endpoints. Supported HTTP rest endpoints and their \
   \ request and response details."
   contact:
