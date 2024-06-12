@@ -725,6 +725,9 @@ components:
         description:
           type: "string"
           description: "The description of the Filter given when it was created."
+        filterContents:
+          type: "string"
+          description: "The contents of the Filter in Ambar filter DSL."
         state:
           type: "string"
           description: "The ResourceState of this Filter. For possible values see\
@@ -734,6 +737,7 @@ components:
         - "dataDestinationsUsingFilter"
         - "dataSourceId"
         - "resourceId"
+        - "filterContents"
         - "state"
     # Describe DataSource Shape
     DataSource:
