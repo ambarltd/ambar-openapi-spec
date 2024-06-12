@@ -676,6 +676,9 @@ components:
           type: "string"
           description: "The HTTP endpoint which Ambar sends filtered record sequences\
             \ to."
+        destinationPort:
+          type: "string"
+          description: "The port on which your endpoint service is listening for connections."
         description:
           type: "string"
           description: "The description of the DataDestination given when it was created."
@@ -695,6 +698,7 @@ components:
       required:
         - "createdAt"
         - "destinationEndpoint"
+        - "destinationPort"
         - "filterIds"
         - "resourceId"
         - "state"
