@@ -797,10 +797,6 @@ components:
           type: "string"
           description: "The HTTP endpoint which Ambar will deliver messages too. The\
             \ endpoint should accept a username and password credential pair for authentication."
-        destinationPort:
-          type: "string"
-          description: "The port on which your endpoint service is listening for connections. If not supplied then the\
-            \ HTTPS (443) port is used."
         description:
           type: "string"
           description: "A description for identifying this DataDestination."
