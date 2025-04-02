@@ -2,7 +2,7 @@ openapi: "3.0.1"
 info:
   title: "Ambar OpenAPI Specification"
   # We will version our spec to a day.
-  version: "2024-06-11"
+  version: "2025-03-02"
   description: "Details about communicating with Ambar.cloud public endpoints. Supported HTTP rest endpoints and their \
   \ request and response details."
   contact:
@@ -821,9 +821,16 @@ components:
     UpdateDataDestinationRequest:
       required:
         - "resourceId"
-        - "destinationEndpoint"
       type: "object"
       properties:
+        filterIds:
+          type: "array"
+          items:
+            type: "string"
+            description: ""
+          description: "The Ambar ResourceId of a the filter in your environment to\
+            \ use to determine what data sources to pull records from and how to filter\
+            \ record sequences before delivery to your endpoint."
         destinationEndpoint:
           type: "string"
           description: "The HTTP endpoint which Ambar will deliver messages too. The\
