@@ -1,8 +1,7 @@
 openapi: "3.0.1"
 info:
   title: "Ambar OpenAPI Specification"
-  # We will version our spec to a day.
-  version: "2025-04-02"
+  version: "2025-05-05"
   description: "Details about communicating with Ambar.cloud public endpoints. Supported HTTP rest endpoints and their \
   \ request and response details."
   contact:
@@ -14,6 +13,8 @@ info:
 servers:
   - url: "https://euw1.api.ambar.cloud"
     description: "Ambar regional API endpoint for eu-west-1."
+  - url: "https://apse5.api.ambar.cloud"
+    description: "Ambar regional API endpoint for ap-southeast-5."
 
 # Detailed descriptions of the HTTP paths and Verbs of Ambar endpoints.
 paths:
@@ -21,14 +22,11 @@ paths:
     get:
       tags:
         - Ambar
-      # Optional, override the operation id (name) used for communication at this path
       operationId: "ListResources"
-      # Short summary of the operation.
       summary: "List the Ambar resources in your Ambar environment."
-      # Verbose description of the operation.
       description: "List the Ambar resources in your Ambar environment. Resources will be returned \
       \ in a list of lists, where each sub-list will be of one Ambar resourceType."
-      # Eventually, we need to point to any gitlab, wikis, etc. that we offer to customers.
+     
       externalDocs:
         description: "More details available in Ambar public docs."
         url: "https://docs.ambar.cloud"
@@ -613,7 +611,6 @@ paths:
         - api_key: []
 components:
   schemas:
-    # List Resources response shapes
     ListResourcesResponse:
       type: "object"
       properties:
@@ -653,7 +650,6 @@ components:
           type: "string"
         lastUpdated:
           type: "string"
-    # Common state change response shape, for API's which will cause a resource to change state (create, update, delete, etc)
     ResourceStateChangeResponse:
       type: "object"
       properties:
@@ -664,7 +660,6 @@ components:
       required:
         - "resourceId"
         - "state"
-    # Describe DataDestination Shape
     DataDestination:
       description: "The properties describing an Ambar Data Destination."
       type: "object"
@@ -698,7 +693,6 @@ components:
         - "filterIds"
         - "resourceId"
         - "state"
-    # Describe Filter Shape
     Filter:
       description: "The properties describing an Ambar Filter."
       type: "object"
@@ -735,7 +729,6 @@ components:
         - "resourceId"
         - "filterContents"
         - "state"
-    # Describe DataSource Shape
     DataSource:
       description: "The properties describing an Ambar Data Source."
       type: "object"
@@ -774,7 +767,6 @@ components:
         - "resourceId"
         - "state"
         - "filterIds"
-    # Request shapes
     ListResourcesRequest:
       type: "object"
       properties:
@@ -784,7 +776,6 @@ components:
         page:
           type: "string"
           description: ""
-    # Create DataDestination request shape
     CreateDataDestinationRequest:
       required:
         - "destinationEndpoint"
@@ -817,7 +808,6 @@ components:
           description: "A case sensitive string for the user Ambar should use to connect\
             \ to your HTTP endpoint service."
       description: "The request properties for creating an Ambar Data Destination."
-    # Update Data Destination request shape
     UpdateDataDestinationRequest:
       required:
         - "resourceId"
@@ -839,7 +829,6 @@ components:
           type: "string"
           description: "An Ambar resourceId."
       description: "The resource properties to update on the Ambar Data Destination."
-    # Common Update Resource Credentials request shape
     UpdateResourceCredentialsRequest:
       required:
         - "resourceId"
@@ -857,7 +846,6 @@ components:
           type: "string"
           description: "The username portion of the credential to update for your resource."
       description: "The common request for updating credentials of an Ambar resource."
-    # Common Describe Resource request shape
     DescribeResourceRequest:
       required:
         - "resourceId"
@@ -867,7 +855,6 @@ components:
           type: "string"
           description: "An Ambar resourceId."
       description: "The common request for describing an Ambar resource."
-    # Creat DataSource request shape
     CreateDataSourceRequest:
       description: "The request properties for creating an Ambar Data Source."
       required:
@@ -925,7 +912,6 @@ components:
           type: "string"
           description: "A description for identifying this Filter."
       description: "The request properties for creating an Ambar Filter."
-    # Common Delete Resource Request shape
     DeleteResourceRequest:
       required:
         - "resourceId"
@@ -936,8 +922,6 @@ components:
           description: "An Ambar resourceId."
           example: "AMBAR-1fG45k7090"
       description: "The common request for deleting an Ambar resource."
-    # Error shapes
-    # 400 - Invalid filter input
     InvalidFilterException:
       required:
         - "InvalidFilterException"
@@ -945,7 +929,6 @@ components:
       properties:
         InvalidFilterException:
           type: "string"
-    # 400 - Invalid parameter
     InvalidParameterException:
       required:
         - "InvalidParameterException"
@@ -953,7 +936,6 @@ components:
       properties:
         InvalidParameterException:
           type: "string"
-    # 400 - Resource invalid state
     ResourceInvalidStateException:
       required:
         - "ResourceInvalidStateException"
@@ -961,7 +943,6 @@ components:
       properties:
         ResourceInvalidStateException:
           type: "string"
-    # 404 - Resource not found
     ResourceNotFoundException:
       required:
         - "ResourceNotFoundException"
@@ -969,7 +950,6 @@ components:
       properties:
         ResourceNotFoundException:
           type: "string"
-    # 500 - Service Exception
     AmbarServiceException:
       required:
         - "AmbarServiceException"
